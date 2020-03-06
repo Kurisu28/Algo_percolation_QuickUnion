@@ -11,13 +11,13 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     // grid is the 2d array;
-    int[][] grid;
-    // num is the number of element;
-    int num;
+    private int[][] grid;
+    // num is the number of row element;
+    private int num;
     // N is the number of open sites;
-    int N;
+    private int N;
     // uf is the object of UF;
-    WeightedQuickUnionUF uf;
+    private WeightedQuickUnionUF uf;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
@@ -71,11 +71,12 @@ public class Percolation {
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
-        if (row + 1 <= 0 || col + 1 <= 0) {
+        return false;
+        /*if (row + 1 <= 0 || col + 1 <= 0) {
             throw new IllegalArgumentException("input is not correct");
         }
         int ufposition = (row) * num + col + 1;
-        return uf.connected(ufposition, 0);
+        return uf.connected(ufposition, 0);*/
     }
 
     // returns the number of open sites
