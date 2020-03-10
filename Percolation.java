@@ -29,10 +29,9 @@ public class Percolation {
             this.num = n;
             this.grid = new int[n + 2][n + 2];
             this.uf = new WeightedQuickUnionUF(n * n + 2);
-            this.num = 0;
             for (int i = 1; i <= n; i++) {
                 uf.union(0, i);
-                uf.union(n * n + 1, n * i);
+                uf.union(n * n + 1, n * (n - 1) + i);
             }
         }
     }
@@ -47,13 +46,13 @@ public class Percolation {
             this.grid[row + 1][col + 1] = 1;
             int ufposition = (row) * num + col + 1;
             if (grid[row + 2][col + 1] == 1) {
-                uf.union(row * num + col, ufposition);
+                uf.union((row + 1) * num + col + 1, ufposition);
             }
             if (grid[row][col + 1] == 1) {
-                uf.union((row - 2) * num + col, ufposition);
+                uf.union((row - 1) * num + col + 1, ufposition);
             }
             if (grid[row + 1][col + 2] == 1) {
-                uf.union(row * num + col + 1, ufposition);
+                uf.union(row * num + col + 2, ufposition);
             }
             if (grid[row + 1][col] == 1) {
                 uf.union(row * num + col, ufposition);
@@ -71,12 +70,12 @@ public class Percolation {
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
-        return false;
-        /*if (row + 1 <= 0 || col + 1 <= 0) {
+        //return false;
+        if (row + 1 <= 0 || col + 1 <= 0) {
             throw new IllegalArgumentException("input is not correct");
         }
         int ufposition = (row) * num + col + 1;
-        return uf.connected(ufposition, 0);*/
+        return this.isOpen(row, col) && uf.connected(ufposition, 0);
     }
 
     // returns the number of open sites
