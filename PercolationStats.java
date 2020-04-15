@@ -9,6 +9,7 @@
 
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
+import edu.princeton.cs.algs4.Stopwatch;
 
 public class PercolationStats {
     // average value of x
@@ -72,7 +73,10 @@ public class PercolationStats {
     public static void main(String[] args) {
         int number = Integer.parseInt(args[0]);
         int trails = Integer.parseInt(args[1]);
+        Stopwatch st = new Stopwatch();
         PercolationStats ps = new PercolationStats(number, trails);
+        double time = st.elapsedTime();
+        System.out.print("\ntime   is                   " + time);
         System.out.print("\nmean   is                   " + ps.mean());
         System.out.print("\nstddev is                   " + ps.stddev(trails));
         System.out.print("\n95% confidence interval is " + "[" + ps.confidenceLo() + "," + ps
