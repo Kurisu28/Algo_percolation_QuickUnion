@@ -37,10 +37,10 @@ public class PercolationVisualizer {
         // draw n-by-n grid
         for (int row = 0; row < n; row++) {
             for (int col = 0; col < n; col++) {
-                if (PercolationVisualizer.isFull(row, col)) {
+                if (PercolationVisualizer.isFull(row + 1, col + 1)) {
                     StdDraw.setPenColor(StdDraw.BOOK_LIGHT_BLUE);
                 }
-                else if (PercolationVisualizer.isOpen(row, col)) {
+                else if (PercolationVisualizer.isOpen(row + 1, col + 1)) {
                     StdDraw.setPenColor(StdDraw.WHITE);
                 }
                 else {
