@@ -11,7 +11,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     // grid is the 2d array;
-    private boolean[][] grid;
+    private int[][] grid;
     // num is the number of row element;
     private int num;
     // N is the number of open sites;
@@ -25,19 +25,23 @@ public class Percolation {
             throw new IllegalArgumentException("input is not correct: " + Integer.toString(n));
         }
         else {
-            // 0 means blocked, 1 means open
+            // 0 means blocked, 1 means open, 2 means full
             this.num = n;
-            this.grid = new boolean[n + 2][n + 2];
+            this.grid = new int[n + 2][n + 2];
             this.uf = new WeightedQuickUnionUF(n * n + 2);
             this.nopen = 0;
         }
     }
 
     // helper function to union the current opensite and four sites around it
-    private void helper(int rowoffset, int coloffset, int ufposition) {
-        if (grid[rowoffset][coloffset]) {
+    private boolean helper(int rowoffset, int coloffset, int ufposition) {
+        if (grid[rowoffset][coloffset] > 0) {
             this.uf.union((rowoffset - 1) * num + coloffset, ufposition);
         }
+        if (grid[rowoffset][coloffset] == 2) {
+            return true;
+        }
+        return false;
     }
 
     // opens the site (row, col) if it is not open already
@@ -45,16 +49,27 @@ public class Percolation {
         if (row <= 0 || col <= 0 || row > this.num || col > this.num) {
             throw new IllegalArgumentException("input is less than zero");
         }
-        else if (!this.isOpen(row, col)) {
+        int ufposition = (row - 1) * num + col;
+        if (!this.isOpen(row, col)) {
             this.nopen++;
-            this.grid[row][col] = true;
-            int ufposition = (row - 1) * num + col;
-            helper(row + 1, col, ufposition);
-            helper(row - 1, col, ufposition);
-            helper(row, col + 1, ufposition);
-            helper(row, col - 1, ufposition);
             if (row == 1) {
                 this.uf.union(0, ufposition);
+                this.grid[row][col] = 2;
+            }
+            else {
+                this.grid[row][col] = 1;
+            }
+            if (helper(row + 1, col, ufposition)) {
+                this.grid[row][col] = 2;
+            }
+            if (helper(row - 1, col, ufposition)) {
+                this.grid[row][col] = 2;
+            }
+            if (helper(row, col + 1, ufposition)) {
+                this.grid[row][col] = 2;
+            }
+            if (helper(row, col - 1, ufposition)) {
+                this.grid[row][col] = 2;
             }
             if (row == this.num) {
                 this.uf.union(this.num * this.num + 1, ufposition);
@@ -67,7 +82,7 @@ public class Percolation {
         if (row <= 0 || col <= 0 || row > this.num || col > this.num) {
             throw new IllegalArgumentException("input is not correct");
         }
-        return this.grid[row][col];
+        return this.grid[row][col] > 0;
     }
 
     // is the site (row, col) full?
@@ -75,8 +90,17 @@ public class Percolation {
         if (row <= 0 || col <= 0 || row > this.num || col > this.num) {
             throw new IllegalArgumentException("input is not correct");
         }
-        int ufposition = (row - 1) * num + col;
-        return this.isOpen(row, col) && (this.uf.find(0) == this.uf.find(ufposition));
+        if (grid[row][col] == 2) {
+            return true;
+        }
+        if (grid[row][col] == 1 && (grid[row - 1][col] == 2 ||
+                grid[row + 1][col] == 2 ||
+                grid[row][col + 1] == 2 ||
+                grid[row][col - 1] == 2)) {
+            grid[row][col] = 2;
+            return true;
+        }
+        return false;
     }
 
     // returns the number of open sites
