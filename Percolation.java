@@ -33,15 +33,44 @@ public class Percolation {
         }
     }
 
-    // helper function to union the current opensite and four sites around it
-    private boolean helper(int rowoffset, int coloffset, int ufposition) {
-        if (grid[rowoffset][coloffset] > 0) {
-            this.uf.union((rowoffset - 1) * num + coloffset, ufposition);
-        }
-        if (grid[rowoffset][coloffset] == 2) {
+    // helper function to simplify the logic for recurtion
+    private boolean helprecur(int row, int col) {
+        if (grid[row][col] == 1) {
+            grid[row][col] = 2;
             return true;
         }
         return false;
+    }
+
+    // recursion to set all connected node to full
+    private void setFull(int row, int col) {
+        if (helprecur(row + 1, col)) {
+            setFull(row + 1, col);
+        }
+        if (helprecur(row - 1, col)) {
+            setFull(row - 1, col);
+        }
+        if (helprecur(row, col + 1)) {
+            setFull(row, col + 1);
+        }
+        if (helprecur(row, col - 1)) {
+            setFull(row, col - 1);
+        }
+    }
+
+    // helper function to union the current opensite and four sites around it
+    private void helper(int rowoffset, int coloffset, int ufposition, int row, int col) {
+        if (grid[rowoffset][coloffset] > 0) {
+            this.uf.union((rowoffset - 1) * num + coloffset, ufposition);
+        }
+        if (grid[rowoffset][coloffset] == 1 && grid[row][col] == 2) {
+            grid[rowoffset][coloffset] = 2;
+            setFull(rowoffset, coloffset);
+        }
+        if (grid[rowoffset][coloffset] == 2) {
+            grid[row][col] = 2;
+            setFull(row, col);
+        }
     }
 
     // opens the site (row, col) if it is not open already
@@ -59,18 +88,10 @@ public class Percolation {
             else {
                 this.grid[row][col] = 1;
             }
-            if (helper(row + 1, col, ufposition)) {
-                this.grid[row][col] = 2;
-            }
-            if (helper(row - 1, col, ufposition)) {
-                this.grid[row][col] = 2;
-            }
-            if (helper(row, col + 1, ufposition)) {
-                this.grid[row][col] = 2;
-            }
-            if (helper(row, col - 1, ufposition)) {
-                this.grid[row][col] = 2;
-            }
+            helper(row + 1, col, ufposition, row, col);
+            helper(row - 1, col, ufposition, row, col);
+            helper(row, col + 1, ufposition, row, col);
+            helper(row, col - 1, ufposition, row, col);
             if (row == this.num) {
                 this.uf.union(this.num * this.num + 1, ufposition);
             }
@@ -93,6 +114,12 @@ public class Percolation {
         if (grid[row][col] == 2) {
             return true;
         }
+        return false;
+        /*
+        // this does not work since for visualizer the code will periodically use isFull to check
+        // each nodes. But in real implemention isFull is required to return full status without
+        // periodically checking. Hence under the condition that there is no periodically checking
+        // full nodes wont be set to 2 (no checking) .
         if (grid[row][col] == 1 && (grid[row - 1][col] == 2 ||
                 grid[row + 1][col] == 2 ||
                 grid[row][col + 1] == 2 ||
@@ -100,7 +127,8 @@ public class Percolation {
             grid[row][col] = 2;
             return true;
         }
-        return false;
+        return false;*/
+
     }
 
     // returns the number of open sites

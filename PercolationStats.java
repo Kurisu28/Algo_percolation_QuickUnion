@@ -33,8 +33,8 @@ public class PercolationStats {
         Percolation percolation = new Percolation(n);
         for (int i = 0; i < trials; i++) {
             while (!percolation.percolates()) {
-                int x = StdRandom.uniform(n);
-                int y = StdRandom.uniform(n);
+                int x = StdRandom.uniform(1, n + 1);
+                int y = StdRandom.uniform(1, n + 1);
                 if (!percolation.isOpen(x, y)) {
                     percolation.open(x, y);
                     tempsites++;
