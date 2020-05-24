@@ -29,22 +29,23 @@ public class PercolationStats {
         }
         double[] ratio = new double[trials];
         double total = n * n;
-        int tempsites = 0;
-        Percolation percolation = new Percolation(n);
+        double[] tempsites = new double[trials];
         for (int i = 0; i < trials; i++) {
+            Percolation percolation = new Percolation(n);
             while (!percolation.percolates()) {
                 int x = StdRandom.uniform(1, n + 1);
                 int y = StdRandom.uniform(1, n + 1);
+                //System.out.print("\n x y is :" + x + y);
                 if (!percolation.isOpen(x, y)) {
                     percolation.open(x, y);
-                    tempsites++;
+                    tempsites[i]++;
                 }
             }
-            ratio[i] = tempsites / total;
+            ratio[i] = tempsites[i] / total;
         }
         average = StdStats.mean(ratio);
         stdres = StdStats.stddev(ratio);
-        opensites = tempsites;
+        opensites = (int) StdStats.mean(tempsites);
     }
 
     // sample mean of percolation threshold
