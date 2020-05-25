@@ -12,14 +12,12 @@ import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.Stopwatch;
 
 public class PercolationStats {
-    // average value of x
-    private final double average;
-    // stdres is the result of standard deviation
-    private final double stdres;
-    // the numbre of opensites
-    private final int opensites;
+    // ratio is the result experiment
+    private final double[] ratio;
     // 1.96 constant for cacl deviation
     private static final double CONSTANT_96 = 1.96;
+    // the numbre of trails
+    private final int xtrails;
 
     // perform independent trials on an n-by-n grid
     public PercolationStats(int n, int trials) {
@@ -27,7 +25,7 @@ public class PercolationStats {
             throw new IllegalArgumentException(
                     "input is not correct: " + Integer.toString(n) + Integer.toString(trials));
         }
-        double[] ratio = new double[trials];
+        ratio = new double[trials];
         double total = n * n;
         double[] tempsites = new double[trials];
         for (int i = 0; i < trials; i++) {
@@ -35,7 +33,6 @@ public class PercolationStats {
             while (!percolation.percolates()) {
                 int x = StdRandom.uniform(1, n + 1);
                 int y = StdRandom.uniform(1, n + 1);
-                //System.out.print("\n x y is :" + x + y);
                 if (!percolation.isOpen(x, y)) {
                     percolation.open(x, y);
                     tempsites[i]++;
@@ -43,30 +40,28 @@ public class PercolationStats {
             }
             ratio[i] = tempsites[i] / total;
         }
-        average = StdStats.mean(ratio);
-        stdres = StdStats.stddev(ratio);
-        opensites = (int) StdStats.mean(tempsites);
+        xtrails = trials;
     }
 
     // sample mean of percolation threshold
     public double mean() {
-        return average;
+        return StdStats.mean(ratio);
     }
 
     // sample standard deviation of percolation threshold
     public double stddev() {
-        return stdres;
+        return StdStats.stddev(ratio);
     }
 
     // low endpoint of 95% confidence interval
     public double confidenceLo() {
-        double templo = average - (CONSTANT_96 * stdres) / Math.sqrt(opensites);
+        double templo = this.mean() - (CONSTANT_96 * this.stddev()) / Math.sqrt(xtrails);
         return templo;
     }
 
     // high endpoint of 95% confidence interval
     public double confidenceHi() {
-        double temphi = average + (CONSTANT_96 * stdres) / Math.sqrt(opensites);
+        double temphi = this.mean() + (CONSTANT_96 * this.stddev()) / Math.sqrt(xtrails);
         return temphi;
     }
 
@@ -77,9 +72,9 @@ public class PercolationStats {
         Stopwatch st = new Stopwatch();
         PercolationStats ps = new PercolationStats(number, trails);
         double time = st.elapsedTime();
-        System.out.print("\ntime   is                   " + time);
-        System.out.print("\nmean   is                   " + ps.mean());
-        System.out.print("\nstddev is                   " + ps.stddev());
+        System.out.print("\ntime   is                  " + time);
+        System.out.print("\nmean   is                  " + ps.mean());
+        System.out.print("\nstddev is                  " + ps.stddev());
         System.out.print("\n95% confidence interval is " + "[" + ps.confidenceLo() + "," + ps
                 .confidenceHi() + "]");
     }

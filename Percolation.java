@@ -59,7 +59,7 @@ public class Percolation {
     }
 
     // helper function to union the current opensite and four sites around it
-    private void helper(int rowoffset, int coloffset, int ufposition, int row, int col) {
+    /*private void helper(int rowoffset, int coloffset, int ufposition, int row, int col) {
         if (grid[rowoffset][coloffset] > 0) {
             this.uf.union((rowoffset - 1) * num + coloffset, ufposition);
         }
@@ -69,9 +69,8 @@ public class Percolation {
         }
         if (grid[rowoffset][coloffset] == 2) {
             grid[row][col] = 2;
-            setFull(row, col);
         }
-    }
+    }*/
 
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
@@ -88,10 +87,15 @@ public class Percolation {
             else {
                 this.grid[row][col] = 1;
             }
-            helper(row + 1, col, ufposition, row, col);
+            /*helper(row + 1, col, ufposition, row, col);
             helper(row - 1, col, ufposition, row, col);
             helper(row, col + 1, ufposition, row, col);
-            helper(row, col - 1, ufposition, row, col);
+            helper(row, col - 1, ufposition, row, col);*/
+            if (grid[row + 1][col] == 2 || grid[row - 1][col] == 2 || grid[row][col + 1] == 2
+                    || grid[row][col - 1] == 2) {
+                grid[row][col] = 2;
+                setFull(row, col);
+            }
             if (row == this.num) {
                 this.uf.union(this.num * this.num + 1, ufposition);
             }
